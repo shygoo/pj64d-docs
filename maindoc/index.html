@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Project64 Debugger</title>
+<meta charset="utf-8">
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>        
+<style>
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+body {
+    font-family: "Open Sans", Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    background-color: #EEE;
+    color: #222;
+}
+
+a {
+    color: #1082CC;
+    text-decoration: none;
+}
+
+a:hover{
+    color: #0072BC;
+}
+
+span.snip
+{
+    font-family: "Consolas", "Courier New", monospace;
+    background-color: #CCC;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #CCC;
+}
+
+ul
+{
+    padding-inline-start: 30px;
+}
+
+h2 {
+    margin-bottom: 0px;
+}
+
+div.subtitle
+{
+    font-style: italic;
+    margin-top: 0.2em;
+    margin-bottom: 1em;
+}
+
+</style>
+</head>
+<body>
+<div id="main" style="margin: 100px auto; width: 680px;">
+<h1>Project64 Debugger</h1>
+<hr>
+<ul>
+    <li><a href="#download">Download</a></li>
+    <li><a href="#bug_reports">Bug Reports &amp; Suggestions</a></li>
+    <li><a href="#debugger_setup">Debugger Setup</a></li>
+    <li><a href="#external_memory_viewer_setup">External Memory Scanner Setup</a></li>
+    <li><a href="#breakpoints_overview">Breakpoints Overview</a></li>
+    <li><a href="#commands">Commands</a></li>
+    <li><a href="#memory_viewer">Memory Viewer</a></li>
+    <li><a href="#memory_scanner">Memory Scanner</a></li>
+    <li><a href="#memory_dumper">Memory Dumper</a></li>
+    <li><a href="#script_console">Script Console</a></li>
+    <li><a href="#symbol_manager">Symbol Manager</a></li>
+    <li><a href="#dma_log">DMA Log</a></li>
+    <li><a href="#cpu_log">CPU Log</a></li>
+    <li><a href="#exception_breakpoints">Exception Breakpoints</a></li>
+    <li><a href="#stack_viewer">Stack Viewer</a></li>
+    <li><a href="#stack_trace">Stack Trace</a></li>
+</ul>
+<hr>
+
+<!-- download -->
+<h2 id="download">Download</h2>
+<p>
+    Most of Project64’s debugging tools are relatively new, so they are not available in a stable release at this time.
+    To get a version of the emulator with debugging features included, you can download the latest nightly build or build it yourself from source:
+</p>
+<ul>
+    <li><b>Nightly builds</b>: <a target="_blank" href="https://www.pj64-emu.com/nightly-builds">https://www.pj64-emu.com/nightly-builds</a></li>
+    <li><b>Source</b>: <a target="_blank" href="https://github.com/project64/project64">https://github.com/project64/project64</a></li>
+</ul>
+<p>
+    Unfinished features that are not yet integrated may be found on this Github fork:
+</p>
+<ul>
+    <li><a target="_blank" href="https://github.com/shygoo/project64/branches">https://github.com/shygoo/project64/branches</a></li>
+</ul>
+<hr>
+
+<!-- bug reports & suggestions -->
+<h2 id="bug_reports">Bug Reports &amp; Suggestions</h2>
+<p>If you have a bug report please post it to the issue tracker:</p>
+<ul>
+    <li><a target="_blank" href="https://github.com/project64/project64/issues">https://github.com/project64/project64/issues</a></li>
+</ul>
+<p>You can post feature suggestions to the discussion thread:</p>
+<ul>
+    <li><a target="_blank" href="https://hack64.net/Thread-Project64-Debugger">https://hack64.net/Thread-Project64-Debugger</a></li>
+</ul>
+
+<hr>
+
+<!-- debugger setup -->
+<h2 id="debugger_setup">Debugger Setup</h2>
+<p>A few settings must be applied to enable Project64’s debugging tools.</p>
+<ul>
+<li>Open <i>Options > Settings…</i></li>
+<li>Uncheck <i>“Hide advanced settings”</i> and <i>“Pause emulation when window is not active”</i></li>
+<li>In advanced settings, check <i>“Enable debugger”</i></li>
+<li>(Recommended) In advanced settings, check <i>“Always use interpreter core”</i></li>
+</ul>
+<p><img style="border: 1px solid #CCC;" src="setup1.png"></p>
+<p><img style="border: 1px solid #CCC;" src="setup2.png"></p>
+<p>Enabling the <i>“Always use interpreter core”</i> option will negatively impact game performance, but it is required for some of the debugging features to function.</p>
+<hr>
+<h2>External Memory Scanner Setup</h2>
+<p>Project64’s debugger includes a built-in memory scanning tool, but if you would like to use a 3rd-party memory scanner like Cheat Engine, Project64’s <i>“Fixed Rdram Address”</i> setting may be used to make address resolution simpler.</p>
+<p>To enable it, open Config/Project64.cfg in a text editor and add <span class="snip">Fixed Rdram Address=536870912</span> under <span class="snip">[default]</span>. This setting will force Project64 to always allocate RDRAM at 0x20000000 in process memory.</p>
+<p>Note that for optimization reasons Project64 uses little-endian byte ordering for RDRAM, so string data may not appear in the correct order when viewed from an external application.</p>
+<hr>
+
+<!-- breakpoints overview -->
+<h2 id="breakpoints_overview">Breakpoints Overview</h2>
+<p>Project64's debugger provides the following breakpoint types:</p>
+<ul>
+<li>Program Counter Breakpoints</li>
+<li>Memory Read &amp; Write Breakpoints</li>
+<li>Register Read &amp; Write Breakpoints</li>
+<li>Exception Breakpoints</li>
+<li>Conditional Breakpoints</li>
+</ul>
+<h3>Program Counter Breakpoints</h3>
+<p>Program counter (PC) breakpoints pause the CPU when an instruction at a specified address is about to be executed. PC breakpoints may be set or cleared by double-clicking instructions in the Commands window.</p>
+<h3>Memory Read &amp; Write Breakpoints</h3>
+<p>Memory read &amp; write breakpoints pause the CPU when an instruction is about to read or write to a specified address in memory. Memory write breakpoints also pause on PI DMA transfers from cartridge ROM to RDRAM. Memory read &amp; write breakpoints may be set or cleared by right clicking bytes in the Memory window.</p>
+<h3>Register Read &amp; Write Breakpoints</h3>
+<p>Register read &amp; write breakpoints pause the CPU when an instruction is about to read or write to a specified register. Register read &amp; write breakpoints may be set by clicking or right clicking the labels for the general-purpose registers (GPR) in the Commands window.</p>
+<h3>Exception Breakpoints</h3>
+<p>Exception breakpoints pause the CPU at an exception vector when a specified exception or interrupt is asserted. CPU Exception breakpoints may be set or cleared via the checkboxes in the CPU Exception Breakpoints window.</p>
+<h3>Conditional Breakpoints</h3>
+<p>Conditional breakpoints pause the CPU when a user-defined condition is met. Conditional breakpoints may be set via the scripting API using <span class="snip">events</span> interface callbacks and the <span class="snip">debug.breakhere()</span> function.</p>
+<hr>
+
+<!-- commands -->
+<h2 id="commands">Commands</h2>
+<div class="subtitle">(Debugger > Commands...)</div>
+<img src="commands.png" style="max-width:100%; height: auto;">
+<p>The Commands tool is used to read, edit, and debug assembly code, monitor CPU and memory-mapped registers, and manage program counter (PC) and register breakpoints.</p>
+
+<h3>PC Breakpoints</h3>
+PC breakpoints may be toggled by double-clicking addresses or by clicking the "Toggle breakpoint" option in the context menu.
+The "Run to line" option may be used to set a temporary breakpoint.
+
+<h3>Register breakpoints</h3>
+<p>Register read and write breakpoints may be toggled by clicking or right clicking the register labels.</p>
+
+<p>Currently, only general purpose registers are supported. If you wish to set a breakpoint on a memory-mapped register, it can be done from the memory viewer window.</p>
+
+<h3>Editing code</h3>
+Code may be edited by clicking the "Edit code" option in the context menu. Edited code will appear magenta in the command list. Note that edits are temporary; they are not saved to the ROM file.
+
+<h3>Command list color legend</h3>
+<ul>
+<li>Highlighted in yellow: PC is at this address
+<li>Red address: PC breakpoint set at this address
+<li>Brown address: Temporary PC breakpoint set at this address
+<li>Green: Jump instruction
+<li>Yellow green: Branch instruction
+<li>Blue: Stack frame allocation (start of subroutine)
+<li>Red: Stack frame free (end of subroutine)
+<li>Magenta: Code was edited by the user
+</ul>
+
+<h3>Register color legend</h3>
+<ul>
+<li>Red value: Current instruction writes to this register
+<li>Blue value: Current instruction reads this register
+<li>Red label: Write breakpoint exists for this register
+<li>Blue label: Read breakpoint exists for this register
+</ul>
+
+<h3>Shortcut keys</h3>
+<ul>
+<li>F1: Skip (Skip command)
+<li>F2: Step (Execute command, break on next command)
+<li>F3: Step over (Execute command, advance PC to return address if command was a JAL)
+<li>F4: Go (Resume execution)
+</ul>
+<hr>
+
+<!-- memory viewer -->
+<h2 id="memory_viewer">Memory Viewer</h2>
+<div class="subtitle">(Debugger > View Memory...)</div>
+<img src="memory.png" style="max-width:100%; height: auto;">
+<p>The memory viewer is used to monitor and edit memory. Breakpoints and locks may be placed on addresses by right-clicking the displayed bytes or using the shortcut keys described below.</p>
+<h3>Editor keyboard and mouse commands</h3>
+<pre>
+    Ctrl+C                 Copy selection to the clipboard
+    Ctrl+X                 Copy selection to the clipboard and zero-fill
+    Ctrl+V                 Paste data from the clipboard
+    Ctrl+B                 Paste data from the clipboard without advancing caret position
+    Ctrl+T                 Duplicate current tab
+    Ctrl+F4                Close current tab
+    Ctrl+Tab               Switch tabs
+    Ctrl+G                 Set base address to caret position or beginning of selection
+    Ctrl+Space             Follow pointer
+    Ctrl+A                 Select all visible bytes
+    Ctrl+E                 Set memory lock at the caret position
+    Ctrl+R                 Set memory read breakpoint at the caret position
+    Ctrl+W                 Set memory write breakpoint at the caret position
+    Ctrl+Q                 Clear all memory breakpoints and locks
+    Ctrl+F                 Open search tool
+    Ctrl+S                 Open memory dump tool
+    Ctrl+[1-9]             Set byte group size
+    Ctrl+Z                 Undo last safe mode edit
+    Insert                 Toggle safe mode
+    Enter                  Write safe-edited data
+    Page Down              Advance base address down
+    Page Up                Advance base address up
+    Home                   Return to caret position
+    Arrows                 Move caret position
+    Ctrl+Arrows            Move caret position (single nibble while in the hex column)
+    Shift+Arrows           Adjust selection range
+    Delete                 Zero-fill selection
+    Backspace              Zero-fill previous nibble/character or zero-fill selection
+    Click                  Set caret position
+    Mouse drag             Make selection
+    Double click           Select byte group
+    Right click            Show context menu
+</pre>
+
+<h3>Editor color legend</h3>
+<ul>
+ <li><span style="color: #FFF; background:rgb(0,0,100); font-family: 'Consolas', monospace;">FF</span> Read breakpoint set</li>
+ <li><span style="color: #FFF; background:rgb(100,0,0); font-family: 'Consolas', monospace;">FF</span> Write breakpoint set</li>
+ <li><span style="color: #FFF; background:rgb(100,0,100); font-family: 'Consolas', monospace;">FF</span> Read and write breakpoints set</li>
+ <li><span style="color: #FFF; background:rgb(100,100,0); font-family: 'Consolas', monospace;">FF</span> Locked value</li>
+ <li><span style="color: #000; background:rgb(200,200,255); font-family: 'Consolas', monospace;">FF</span> CPU read target</li>
+ <li><span style="color: #000; background:rgb(255,200,200); font-family: 'Consolas', monospace;">FF</span> CPU write target</li>
+ <li><span style="color: #000; background:rgb(208,240,208); font-family: 'Consolas', monospace;">FF</span> Symbol</li>
+ <li><span style="color: #F00; background:rgb(255,255,255); font-family: 'Consolas', monospace;">FF</span> Value changed</li>
+ <li><span style="color: rgb(0,100,0); background:rgb(255,255,255); font-family: 'Consolas', monospace;">FF</span> Read-only memory</li>
+ <li><span style="color: rgb(255,0,255); background:rgb(255,230,255); font-family: 'Consolas', monospace;">FF</span> Edited in safe mode</li>
+ </ul>
+
+<h3>Tab bar mouse commands</h3>
+<pre>
+    Double click           Duplicate tab
+    Right click            Close tab
+</pre>
+
+<h3>Status bar mouse commands</h3>
+<pre>
+    Click address range    Copy address range to clipboard
+    Click "Have DMA"       Show DMA information
+</pre>
+
+<h3>Safe mode</h3>
+<p>Safe mode is a setting that may be toggled via the insert key or from the option in the context menu.
+While safe mode is enabled, edits made by the user are not written into memory until the enter key is pressed.
+This can make it easier to edit pointers and touchy variables without crashing your game.</p>
+<hr>
+
+<!-- memory scanner -->
+<h2 id="memory_scanner">Memory Scanner</h2>
+<div class="subtitle">(Debugger > Memory > Search...)</div>
+<img src="scanner.png" style="max-width:100%; height: auto;">
+<p>The memory scanner is used to locate variables and strings in memory. Advanced search features are included to aid in searching for variables of unknown values and strings of unknown 1-byte encodings. Found variables may be added to the watch-list so that they may be labeled and monitored.</p>
+<p>Watch-list tables are automatically saved as a CSV-like format to "Save/&lt;GAME NAME&gt;.wlst".</p>
+<h3>Video demonstration</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4SOTHmdwrHQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<hr>
+
+<!-- memory dumper -->
+<h2 id="memory_dumper">Memory Dumper</h2>
+<div class="subtitle">(Debugger > Memory > Dump...)</div>
+<img src="dumper.png" style="max-width:100%; height: auto;">
+<p>The memory dumper is used to dump a chunk of virtual memory to a file. Supported dump formats include raw binary and MIPS disassembly.</p>
+<hr>
+
+<!-- script console -->
+<h2 id="script_console">Script Console</h2>
+<div class="subtitle">(Debugger > Scripts...)</div>
+<img src="scripts.png" style="max-width:100%; height: auto;">
+<p>The script console is used to execute Javascript files from the “Scripts” directory. Project64's scripting API provides hooks for various events, and access to system memory and registers. It also includes file management and networking capabilities which enable it to interact with other programs.</p>
+<p>A script may be executed by double-clicking its name in the list. While a script is waiting for events it will be highlighted green in the list, during which time code may be typed into the console to be evaluated in the script’s context.</p>
+<p>See “<a href="http://shygoo.net/pj64d/apidoc.php">apidoc.htm</a>” for API documentation and examples.</p>
+<h3>Video demonstration</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PC0Tlz6oiN0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<hr>
+
+<!-- symbol manager -->
+<h2 id="symbol_manager">Symbol Manager</h2>
+<div class="subtitle">(Debugger > Memory > Symbols...)</div>
+<img src="symbols.png" style="max-width:100%; height: auto;">
+<p>The symbol manager is used to apply names to addresses of functions and variables in memory and monitor their values real-time.</p>
+<h3>Locating SDK symbols</h3>
+<p>n64sym (<a href="https://github.com/shygoo/n64sym">https://github.com/shygoo/n64sym</a>) may be used to generate SDK symbol tables from RAM dumps. Similar functionality may be added to the debugger in the future.</p>
+<h3>Linker maps</h3>
+Currently there is no built-in way to load symbols from a linker map or ELF. However, it's easy to convert a linker map to a Project64 symbol table using a script. An example is available here: <a href="mapsym.js">mapsym.js</a>.
+<h3>Saving</h3>
+<p>Symbol tables are automatically saved as a CSV-like format to "Save/&lt;GAME NAME&gt;.sym".</p>
+<hr>
+
+<!-- dma log -->
+<h2 id="dma_log">DMA Log</h2>
+<div class="subtitle">(Debugger > Memory > DMA Log...)</div>
+<img src="dmalog.png" style="max-width:100%; height: auto;">
+<p>The DMA log is used to monitor PI DMA transfers from cartridge ROM to RDRAM. Yellow entries indicate adjacent data chunks.</p>
+<h3>Signature detection</h3>
+<p>If the first four bytes of a data chunk are valid alphanumeric ASCII characters, they are displayed in the “Signature” column. This is occasionally useful for file-format identification.</p>
+<h3>Tracing</h3>
+<p>The RAM and ROM address fields at the bottom of the window may be used to lookup corresponding source and destination addresses.</p>
+<hr>
+
+<!-- cpu log -->
+<h2 id="cpu_log">CPU Log</h2>
+<div class="subtitle">(Debugger > R4300i > Command Log...)</div>
+<img src="cpulog.png" style="max-width:100%; height: auto;">
+<p>The CPU log is used to log the state of the CPU at every opcode execution.</p>
+<h3>Enabling</h3>
+<p>This tool can be enabled or disabled via the "Enable CPU Logging" checkbox. The list is not refreshed until CPU logging is disabled or a breakpoint is hit.</p>
+<p>Note that this tool incurs a massive performance penalty while enabled, so remember to turn it off when it's not needed.</p>
+<h3>Buffer size</h3>
+<p>The buffer size specifies the maximum number of operations that should be logged. This setting exists to ensure the log does not take up too much host RAM. The default of 1024 is good enough for most use cases.</p>
+<hr>
+
+<!-- exception breakpoints -->
+<h2 id="exception_breakpoints">Exception Breakpoints</h2>
+<div class="subtitle">(Debugger > R4300i > Exceptions...)</div>
+<img src="exceptions.png" style="max-width:100%; height: auto;">
+<p>This window is used to set breakpoints on specific CPU exceptions and interrupts.</p>
+<h3>Crash diagnosis</h3>
+<p>To diagnose crashes, all exception codes should be checked. TLB-related codes may need to be unchecked for games that use TLB exceptions to their advantage.</p>
+<p>When an exception breakpoint is hit, the CPU will pause at one of the exception vectors (usually at 0x80000180 or 0x80000000) and the COP0 registers (EPC, Cause, BadVAddr) will indicate the cause of the exception. COP0 registers can be viewed in the Commands window under the COP0 tab.</p>
+<hr>
+
+<!-- stack viewer -->
+<h2 id="stack_viewer">Stack Viewer</h2>
+<div class="subtitle">(Debugger > R4300i > Stack...)</div>
+<img src="stack.png" style="max-width:100%; height: auto;">
+<p>This tool shows the memory region that the CPU's stack pointer (SP) register is pointing to, so that the current subroutine’s stack variables may be monitored.</p>
+<hr>
+
+<!-- stack trace -->
+<h2 id="stack_trace">Stack Trace</h2>
+<div class="subtitle">(Debugger > R4300i > Stack Trace...)</div>
+<img src="stacktrace.png" style="max-width:100%; height: auto;">
+<p>The Stack Trace tool shows the current call stack.</p>
+<hr>
+
+</div>
+</body>
+</html>
+
