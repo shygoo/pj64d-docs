@@ -48,7 +48,7 @@ function jsfmt(text) {
     const jsKeyWords = [
         'const', 'var', 'new', 'switch', 'case', 'break', 'default',
         'if', 'else', 'try', 'catch', 'for', 'while', 'true', 'false',
-        'null', 'undefined', 'function', 'this', 'return'
+        'null', 'undefined', 'function', 'this', 'return', 'typeof'
     ];
 
     text = text.replace(/```([\w\W]+?)```/, '$1');
