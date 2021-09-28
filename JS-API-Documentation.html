@@ -440,7 +440,7 @@ window.addEventListener('load', function() {
 </ul></li></p>
 <p><li><a class="" href="#Globals">Globals</a><ul>
 <li><a class="" href="#global">global</a></li>
-<li><a class="" href="#PJ64_JSAPI_REV">PJ64_JSAPI_REV</a></li>
+<li><a class="" href="#PJ64_JSAPI_VERSION">PJ64_JSAPI_VERSION</a></li>
 <li><a class="" href="#require">require(id)</a></li>
 <li><a class="" href="#exec">exec(command[, options])</a></li>
 <li><a class="" href="#alert">alert(message[, caption])</a></li>
@@ -1785,17 +1785,17 @@ Reference to the global object.
 <span class="js-word">global</span>.<span class="js-word">test</span> = <span class="js-number">1</span>;
 <span class="js-word">console</span>.<span class="js-word">log</span>(<span class="js-word">test</span>); <span class="js-comment">// "1"</span>
 </pre>
-<!-- PJ64_JSAPI_REV -->
-<p><div class="prop"><span class="title" id="PJ64_JSAPI_REV">PJ64_JSAPI_REV</span></div>
-<div class="tsproto">PJ64_JSAPI_REV: string</div>
+<!-- PJ64_JSAPI_VERSION -->
+<p><div class="prop"><span class="title" id="PJ64_JSAPI_VERSION">PJ64_JSAPI_VERSION</span></div>
+<div class="tsproto">PJ64_JSAPI_VERSION: string</div>
 </p>
-<p>API major revision name.</p>
+<p>API major version name.</p>
 <table>
 <tr><td><span class="snip">"jsapi-2"</span></td><td>Second edition (Project64 4.0+)</td></tr>
 <tr><td><span class="snip">undefined</span></td><td><a target="blank" href="https://htmlpreview.github.io/?https://github.com/project64/project64/blob/5d0d9927b1fd91e9647eb799f68e132804de924e/apidoc.htm">First edition</a> (Project64 2.4 to 3.x)</td></tr>
 </table>
 <pre class="ex">
-<span class="js-keyword">if</span> (<span class="js-keyword">typeof</span> <span class="js-word">PJ64_JSAPI_REV</span> !== <span class="js-string">'undefined'</span>) {
+<span class="js-keyword">if</span> (<span class="js-keyword">typeof</span> <span class="js-word">PJ64_JSAPI_VERSION</span> !== <span class="js-string">'undefined'</span>) {
     <span class="js-comment">// use new API</span>
 }
 <span class="js-keyword">else</span> {

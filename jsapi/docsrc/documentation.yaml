@@ -1652,17 +1652,17 @@
           console.log(test); // "1"
           ```
 
-  - name: PJ64_JSAPI_REV
-    js:   PJ64_JSAPI_REV
-    ts:   "PJ64_JSAPI_REV: string"
+  - name: PJ64_JSAPI_VERSION
+    js:   PJ64_JSAPI_VERSION
+    ts:   "PJ64_JSAPI_VERSION: string"
     desc: |
-          <p>API major revision name.</p>
+          <p>API major version name.</p>
           <table>
           <tr><td>`"jsapi-2"`</td><td>Second edition (Project64 4.0+)</td></tr>
           <tr><td>`undefined`</td><td>[First edition](https://htmlpreview.github.io/?https://github.com/project64/project64/blob/5d0d9927b1fd91e9647eb799f68e132804de924e/apidoc.htm) (Project64 2.4 to 3.x)</td></tr>
           </table>
           ```
-          if (typeof PJ64_JSAPI_REV !== 'undefined') {
+          if (typeof PJ64_JSAPI_VERSION !== 'undefined') {
               // use new API
           }
           else {
