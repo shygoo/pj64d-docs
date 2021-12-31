@@ -1300,6 +1300,11 @@
     desc: |
           Returns a [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object representing the data of the file specified by `path`.
 
+  - name: fs_exists
+    js:   fs.exists(path)
+    ts:   "fs.exists(path: string): boolean"
+    desc: Returns `true` if the path exists.
+
   - name: fs_fstat
     js:   fs.fstat(fd)
     ts:   "fs.fstat(fd: number): fs.Stats"
