@@ -266,7 +266,7 @@
     js:   mem.getblock(address, length)
     ts:   "mem.getblock(address: number, length: number): Buffer"
     desc: |
-          Returns a block of data from memory as a [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object.
+          Returns a block of data from memory as a [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object.
           ```
           fs.writefile("ram_dump.bin", mem.getblock(K0BASE, mem.ramSize));
           ```
@@ -277,7 +277,7 @@
     desc: |
           Writes a block of data into memory. `data` may be one of the following types&#58;
           [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
-          [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html),
+          [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html),
           [DataView](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView),
           [TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), string.
           ```
@@ -987,9 +987,9 @@
           `width`&#58; Width of the image.<br>
           `height`&#58; Height of the image.<br>
           `format`&#58; Optional image format. `IMG_RGBA32` by default. See the table below for supported formats.<br>
-          `pixels`&#58; Optional [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object containing pixel data.
+          `pixels`&#58; Optional [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object containing pixel data.
           The byte length must be equal to `(width * height * N64Image.bpp(format)) / 8`. Copied to [image.pixels](#image_pixels).<br>
-          `palette`&#58; Optional [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object containing palette data. Copied to [image.palette](#image_palette).
+          `palette`&#58; Optional [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object containing palette data. Copied to [image.palette](#image_palette).
           </p>
           <table>
           <thead>
@@ -1057,7 +1057,7 @@
     js:   image.toPNG()
     ts:   "image.toPNG(): Buffer"
     desc: |
-          Returns a PNG representation of the image data as a [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object.
+          Returns a PNG representation of the image data as a [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object.
           ```
           fs.writefile("image.png", image.toPNG());
           ```
@@ -1285,7 +1285,7 @@
     desc: |
           Writes `buffer` to the file referenced by file descriptor `fd`. `buffer` may be one of the following types&#58;
           [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
-          [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html),
+          [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html),
           [DataView](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView),
           [TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), string.
           <p>
@@ -1316,7 +1316,7 @@
     desc: |
           Reads data from the file referenced by `fd` into `buffer`. `buffer` may be one of the following types&#58;
           [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
-          [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html),
+          [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html),
           [DataView](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView),
           [TypedArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).<br><br>
           `offset`&#58; Position in the source buffer.<br>
@@ -1328,7 +1328,7 @@
     js:   fs.readfile(path)
     ts:   "fs.readfile(path: string): Buffer"
     desc: |
-          Returns a [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object representing the data of the file specified by `path`.
+          Returns a [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object representing the data of the file specified by `path`.
 
   - name: fs_exists
     js:   fs.exists(path)
@@ -1493,7 +1493,7 @@
     ts:   "socket.on('data', listener: (data: Buffer) => void): Socket"
     desc: |
           <p>Registers a listener for the `'data'` event.</p>
-          `listener` receives data as a [Buffer](https://nodejs.org/docs/v6.9.1/api/buffer.html) object.
+          `listener` receives data as a [Buffer](https://nodejs.org/docs/v0.12.1/api/buffer.html) object.
           <p>Returns the Socket object.</p>
 
   - name: socket_on_end
