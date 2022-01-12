@@ -140,7 +140,7 @@
 
   - name: pj64_limitfps
     js:   pj64.limitfps(limitFps)
-    ts:  "pj64.limitfps(limitFps: boolean)"
+    ts:  "pj64.limitfps(limitFps: boolean): void"
     desc: Enables or disables the FPS limit.
 
   - name: pj64.installDirectory
@@ -273,7 +273,7 @@
 
   - name: mem_setblock
     js:   mem.setblock(address, data[, length])
-    ts:   "mem.setblock(address: number, data: string | Buffer | TypedArray, length: number): Buffer"
+    ts:   "mem.setblock(address: number, data: string | Buffer | TypedArray, length?: number): void"
     desc: |
           Writes a block of data into memory. `data` may be one of the following types&#58;
           [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
@@ -295,7 +295,7 @@
 
   - name: mem_setstring
     js:   mem.setstring(address, data[, length])
-    ts:   "mem.setstring(address: number, data: string | Buffer | TypedArray, length?: number): Buffer"
+    ts:   "mem.setstring(address: number, data: string | Buffer | TypedArray, length?: number): void"
     desc: |
           Writes a string into memory (alias of [mem.setblock](#mem_setblock)).
 
@@ -372,6 +372,7 @@
           `callback` receives a [CPUExecEvent](#CPUExecEvent) object.
           <p>Returns a callback ID.</p>
           ```
+          // SM64 US
           events.onexec(0x802CB1C0, function() {
               console.log("func_802CB1C0 was called");
           });
@@ -410,14 +411,6 @@
           `address` may be a single address or an object containing `start` and `end` address properties (e.g. [AddressRange](#AddressRange)).
           `callback` receives a [CPUReadWriteEvent](#CPUReadWriteEvent) object.
           <p>Returns a callback ID.</p>
-          ```
-          events.onwrite(PI_WR_LEN_REG, function(e) {
-              var romAddr = mem.u32[PI_CART_ADDR_REG] + K1BASE;
-              var ramAddr = mem.u32[PI_DRAM_ADDR_REG] + K0BASE;
-              var length = e.value + 1;
-              console.log("Loaded " + romAddr.hex() + " -> " + ramAddr.hex() + " (Length: " + length.hex() + ")");
-          });
-          ```
 
   - name: CPUReadWriteEvent
     js:   CPUReadWriteEvent
@@ -436,7 +429,7 @@
           </p>
           <p>
             <table>
-            <thead><tr><td><b>e.type</b></td><td><b>Opcode(s)</b></td></tr></thead>
+            <thead><tr><td><b>e.valueType</b></td><td><b>Opcode(s)</b></td></tr></thead>
             <tr><td>`s8`</td><td>LB, SB</td></tr>
             <tr><td>`u8`</td><td>LBU</td></tr>
             <tr><td>`s16`</td><td>LH, SH</td></tr>
@@ -601,7 +594,7 @@
 
   - name: events_onpidma
     js:   events.onpidma(callback)
-    ts:   "events.onpidma(callback: (e: PIEvent) => void)"
+    ts:   "events.onpidma(callback: (e: PIEvent) => void): number"
     desc: |
           Registers a callback that is invoked when a PI DMA transfer is going to occur.
           `callback` receives a [PIEvent](#PIEvent) object.
@@ -713,7 +706,10 @@
           });
           ```
 
-  - name: AddressRange
+- name: AddressRange
+  tagline: Address range class
+  props:
+  - name: new_AddressRange
     js:   new AddressRange(start, end)
     ts:   "new AddressRange(start: number, end: number)"
     desc: |
@@ -732,6 +728,40 @@
           <tr><td>`ADDR_ANY_CART_ROM`     </td><td>0x90000000 &#58; 0x95FFFFFF</td><td>Cached cartridge ROM</td></tr>
           <tr><td>`ADDR_ANY_CART_ROM_UNC` </td><td>0xB0000000 &#58; 0xB5FFFFFF</td><td>Uncached cartridge ROM</td></tr>
           </table>
+
+  - name: range_size
+    js:   range.size()
+    ts:   "range.size(): number"
+    desc: Returns the byte length of the address range (`range.end` - `range.start` + 1).
+
+  - name: range_includes
+    js:   range.includes(address)
+    ts:   "range.includes(address: number): boolean"
+    desc: Returns `true` if `address` is within the bounds of the address range.
+
+  - name: range_offset
+    js:   range.offset(address)
+    ts:   "range.offset(address: number): number"
+    desc: |
+          Converts `address` to an offset and returns the result (`address` - `range.start`).
+          <p>Throws an error if `address` is out of bounds.</p>
+
+  - name: range_address
+    js:   range.address(offset)
+    ts:   "range.address(offset: number): number"
+    desc: |
+          Converts `offset` to an address and returns the result (`range.start` + `offset`).
+          <p>Throws an error if `offset` is out of bounds.</p>
+
+  - name: range_start
+    js:   range.start
+    ts:   "range.start: number"
+    desc: The start address.
+
+  - name: range_end
+    js:   range.end
+    ts:   "range.end: number"
+    desc: The end address.
 
 # DrawingContext
 - name:    DrawingContext
@@ -950,7 +980,7 @@
   props:
   - name: new_N64Image
     js:   new N64Image(width, height[, format [, pixels[, palette]]])
-    ts:   "new N64Image(width: number, height: number, format: number = IMG_RGBA32, pixels?: Buffer, palette?: Buffer)"
+    ts:   "new N64Image(width: number, height: number, format?: number = IMG_RGBA32, pixels?: Buffer, palette?: Buffer)"
     desc: |
           Creates an [N64Image](#N64Image) object.
           <p>
@@ -1059,7 +1089,7 @@
 
   - name: image_palette
     js:   image.palette
-    ts:   "image.palette: Buffer"
+    ts:   "image.palette: Buffer | null"
     desc: The palette data of the image. `null` if the image does not use a color-index format.
 
 # cpu
@@ -1212,7 +1242,7 @@
 
   - name: asm_decode
     js:   asm.decode(opcode[, address])
-    ts:   "asm.decode(opcode: number, address?: number)"
+    ts:   "asm.decode(opcode: number, address?: number): string"
     desc: |
           Decodes a single MIPS R4300i opcode. `address` is an optional parameter that may be used to hint the address of the instruction for branch address calculation.
           <p>Returns a line of assembly code as a string.</p>
@@ -1387,7 +1417,7 @@
 
   - name: socket_connect
     js:   socket.connect(port, host[, connectListener])
-    ts:   "socket.connect(port: number, host: string, connectListener: () => void): void"
+    ts:   "socket.connect(port: number, host: string, connectListener?: () => void): void"
     desc: |
           Initiates a TCP connection.
           Optional `connectListener` is invoked when the connection is established (i.e the socket is writable).
@@ -1500,7 +1530,7 @@
 
   - name: socket_off
     js:   socket.off(eventName, listener)
-    ts:   "socket.off(eventName: string, listener: function): Socket"
+    ts:   "socket.off(eventName: string, listener: Function): Socket"
     desc: |
           Removes a listener.
           <p>Returns the Socket object.</p>
@@ -1558,9 +1588,9 @@
 
   - name: server_listen
     js:   server.listen(port[, address])
-    ts:   "server.listen(port: number, address: string): void"
+    ts:   "server.listen(port: number, address?: string = \"0.0.0.0\"): void"
     desc: |
-          Binds the server to the specified address and port and starts listening.
+          Binds the server to the specified port and address and starts listening.
 
   - name: server_close
     js:   server.close()
@@ -1602,7 +1632,7 @@
 
   - name: server_off
     js:   server.off(eventName, listener)
-    ts:   "server.off(eventName: string, listener: function): Server"
+    ts:   "server.off(eventName: string, listener: Function): Server"
     desc: |
           Removes a listener.
           <p>Returns the Server object.</p>
@@ -1643,6 +1673,11 @@
     desc: |
           Sets the maximum amount of time tasks may run on the script instance before errors are thrown. By default this value is 500 milliseconds.
           Setting this value to zero will allow tasks to run indefinitely.
+  
+  - name: script_abort
+    js:   script.abort()
+    ts:   "script.abort(): void"
+    desc: Terminates the script instance.
 
 # globals
 - name: Globals
@@ -1754,7 +1789,7 @@
 
   - name: clearTimeout
     js:   clearTimeout(timeoutId)
-    ts:   "setTimeout(timeoutId: number): void"
+    ts:   "clearTimeout(timeoutId: number): void"
     desc: |
           Cancels the timeout specified by `timeoutId`.
 
@@ -1767,7 +1802,7 @@
 
   - name: clearInterval
     js:   clearInterval(intervalId)
-    ts:   "setTimeout(intervalId: number): void"
+    ts:   "clearInterval(intervalId: number): void"
     desc: |
           Cancels the interval specified by `intervalId`.
 
